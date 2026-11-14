@@ -1,0 +1,132 @@
+{% doc %}
+  Renders a reusable button that can optionally link to a destination URL.
+
+  @param {string} text - The button text
+  @param {string} url - The destination URL
+  @param {string} [class] - Optional CSS class
+  @param {string} [type] - Button type (button, submit, reset)
+  @param {boolean} [new_tab] - Whether to open the link in a new tab
+
+  @example
+  {% render 'button',
+    text: 'Shop now',
+    url: routes.all_products_collection_url
+  %}
+  @example
+  {% render 'button',
+    text: 'Add to cart',
+    url: routes.cart_url,
+    class: 'hero__button'
+
+  %}
+{% enddoc %}
+
+{% liquid
+  assign button_text = text | default: 'Shop now'
+  assign button_class = class | default: 'button'
+  assign button_type = type | default: 'button'
+%}
+
+{% if url != blank %}
+  <a
+    href="{{ url }}"
+    class="{{ button_class }}"
+    {% if new_tab %}
+      target="_blank"
+      rel="noopener noreferrer"
+    {% endif %}
+  >
+    {{ button_text }}
+  </a>
+{% else %}
+  <button
+    type="{{ button_type }}"
+    class="{{ button_class }}"
+  >
+    {{ button_text }}
+  </button>
+{% endif %}
+
+{% stylesheet %}
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 32px;
+    height: 45px;
+    border-radius: 30px;
+    outline: none;
+    background-color: var(--color-black-2);
+    color: var(--color-white-100);
+    font-family: var(--font-primary--family) !important;
+    font-size: 12px;
+    line-height: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--color-black-2);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Hover */
+  .button:hover {
+    background-color: var(--color-indianred-100);
+    border-color: var(--color-saddlebrown);
+    color: var(--color-white-100);
+  }
+
+  /* Focus */
+  /* .button:focus-visible {
+    outline: 2px solid var(--color-saddlebrown);
+    outline-offset: 4px;
+  } */
+
+  /* Disabled */
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .button--primary {
+    background-color: transparent;
+    color: var(--color-black-2);
+    border-color: var(--color-black-2);
+  }
+  .button--primary:hover {
+    background-color: var(--color-indianred-100);
+    color: var(--color-white-100);
+    border-color: var(--color-indianred-100);
+  }
+  /* Secondary button */
+  .button--secondary {
+    background-color: var(--color-black-2);
+    color: var(--color-white-100);
+    border-color: var(--color-black-2);
+  }
+
+  .button--secondary:hover {
+    background-color: var(--color-indianred-100);
+    color: var(--color-white-100);
+    border-color: var(--color-indianred-100);
+  }
+
+  /* Light button */
+  .button--light {
+    background-color: var(--color-white-100);
+    color: var(--color-black-2);
+    border-color: var(--color-white-100);
+  }
+
+  .button--light:hover {
+    background-color: var(--color-linen);
+    border-color: var(--color-linen);
+    color: var(--color-black-2);
+  }
+
+  /* Full width */
+  .button--full {
+    width: 100%;
+  }
+{% endstylesheet %}

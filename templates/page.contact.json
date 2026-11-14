@@ -1,0 +1,84 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "contact-form",
+      "blocks": {
+        "contact_field_JnEtwN": {
+          "type": "contact_field",
+          "settings": {
+            "field_type": "text",
+            "label": "Name",
+            "placeholder": "",
+            "required": true,
+            "half_width": true
+          }
+        },
+        "contact_field_HAYjkt": {
+          "type": "contact_field",
+          "settings": {
+            "field_type": "email",
+            "label": "Email",
+            "placeholder": "",
+            "required": true,
+            "half_width": true
+          }
+        },
+        "contact_field_Tn9kMY": {
+          "type": "contact_field",
+          "settings": {
+            "field_type": "tel",
+            "label": "Phone Number",
+            "placeholder": "",
+            "required": true,
+            "half_width": false
+          }
+        },
+        "contact_field_yNd96F": {
+          "type": "contact_field",
+          "settings": {
+            "field_type": "textarea",
+            "label": "Message",
+            "placeholder": "",
+            "required": true,
+            "half_width": false
+          }
+        }
+      },
+      "block_order": [
+        "contact_field_JnEtwN",
+        "contact_field_HAYjkt",
+        "contact_field_Tn9kMY",
+        "contact_field_yNd96F"
+      ],
+      "settings": {
+        "p-top": 36,
+        "p-bottom": 40,
+        "title": "Got Any Questions?",
+        "desc": "Use the form below to get in touch with the sales team."
+      }
+    },
+    "faq": {
+      "type": "custom-faq",
+      "settings": {
+        "heading": "FAQs",
+        "subheading": "Below are some common questions",
+        "enable_schema": true,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    }
+  },
+  "order": [
+    "main",
+    "faq"
+  ]
+}

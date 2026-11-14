@@ -1,0 +1,258 @@
+<section
+  class="full-width contact"
+  style="--p-top: {{ section.settings.p-top }}px; --p-bottom: {{ section.settings.p-bottom }}px"
+>
+  <div class="shopify-section">
+    <div class="contact__header">
+      {%- if section.settings.title != blank -%}
+        <h2 class="contact__title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.desc != blank -%}
+        <p class="contact__desc">{{ section.settings.desc }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="form-wrapper">
+      {% form 'contact' %}
+        {% comment %}
+          {% if form.errors %}
+            <div class="contact__form-errors">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+        {% endcomment %}
+
+        {% assign email_rendered = false %}
+        {% assign message_rendered = false %}
+        <div class="contact__fields">
+          {% for block in section.blocks %}
+            {% assign field_type = block.settings.field_type %}
+
+            {% if field_type == 'email' %}
+              {% if email_rendered %}
+                {% continue %}
+              {% endif %}
+              {% assign email_rendered = true %}
+            {% endif %}
+            {% if field_type == 'textarea' %}
+              {% if message_rendered %}
+                {% continue %}
+              {% endif %}
+              {% assign message_rendered = true %}
+            {% endif %}
+            <div
+              class="
+                contact__field  {% if block.settings.half_width %}
+                  contact__field--half
+                {% endif %}
+              "
+
+              {{ block.shopify_attributes }}
+            >
+              <label for="Contact-{{ block.id }}">
+                {{- block.settings.label -}}
+                {% comment %}
+                  {%- if block.settings.required -%}
+                    *
+                  {% endif -%}
+                {% endcomment %}
+              </label>
+              {% if field_type == 'textarea' %}
+                <textarea
+                  id="Contact-{{ block.id }}"
+                  name="contact[body]"
+                  placeholder="{{ block.settings.placeholder }}"
+                  {% if block.settings.required %}
+                    required
+                  {% endif -%}
+                ></textarea>
+              {% else %}
+                {% liquid
+                  assign field_name = block.settings.label | handleize
+
+                  if field_type == 'email'
+                    assign field_name = 'email'
+                  elsif field_type == 'tel'
+                    assign field_name = 'phone'
+                  elsif field_type == 'textarea'
+                    assign field_name = 'body'
+                  endif
+                %}
+                <input
+                  type="{{ field_type }}"
+                  id="Contact-{{ block.id }}"
+                  name="contact[{{ field_name }}]"
+                  placeholder="{{ block.settings.placeholder }}"
+                  {% if block.settings.required %}
+                    required
+                  {% endif -%}
+                />
+              {% endif %}
+
+              {% if form.errors contains field_name %}
+                <small class="contact__field-error">
+                  {{ form.errors.messages[field_name] }}
+                </small>
+              {% endif %}
+            </div>
+          {%- endfor %}
+        </div>
+        {% if form.posted_successfully? %}
+          <p style="margin-top: 16px;">Message sent successfully!</p>
+        {% endif %}
+        <div class="submit__btn-wrapper">
+          {% render 'button', text: 'Submit', class: 'button button--primary', type: 'submit' %}
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</section>
+{% stylesheet %}
+  .contact {
+    padding-top: var(--p-top);
+    padding-bottom: var(--p-bottom);
+  }
+  .contact__header {
+    margin-bottom: 36px;
+  }
+  .contact__title {
+    font-family: var(--font-secondary--family) !important;
+    font-size: 36px !important;
+    font-weight: 700 !important;
+    line-height: 50px !important;
+    color: var(--color-black-100);
+    text-align: center;
+    margin-bottom: 2px !important;
+  }
+  .contact__desc {
+    font-family: va(--font-primary--family) !important;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #414141b3;
+    text-align: center;
+  }
+  .form-wrapper {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+  .contact__fields {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    grid-column: 1 / -1;
+  }
+  .contact__field--half {
+    grid-column: span 1;
+  }
+  .contact__field input {
+    height: 50px;
+  }
+  .contact__field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .contact__field input,
+  .contact__field textarea {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    font-family: var(--font-primary--family) !important;
+    background: transparent;
+    outline: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .contact__field textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  .contact__field input:focus,
+  .contact__field textarea:focus {
+    border: 1px solid #000;
+  }
+  .submit__btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  @media screen and (max-width: 640px) {
+    .contact__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+{% schema %}
+{
+  "name": "Contact",
+  "settings": [
+    {
+      "type": "range",
+      "id": "p-top",
+      "label": "Top Padding",
+      "min": 16,
+      "max": 60,
+      "default": 24,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "p-bottom",
+      "label": "Bottom Padding",
+      "min": 16,
+      "max": 60,
+      "default": 24,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "placeholder": "section title",
+      "default": "Got Any Questions?"
+    },
+    {
+      "type": "text",
+      "id": "desc",
+      "label": "Description",
+      "placeholder": "section description",
+      "default": "Use the form below to get in touch with the sales team."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "contact_field",
+      "name": "Contact Field",
+      "settings": [
+        {
+          "type": "select",
+          "id": "field_type",
+          "label": "Field Type",
+          "options": [
+            { "label": "Text", "value": "text" },
+            { "label": "Email", "value": "email" },
+            { "label": "Tel", "value": "tel" },
+            { "label": "Message", "value": "textarea" }
+          ],
+          "default": "text"
+        },
+        { "type": "text", "id": "label", "label": "Field Label", "default": "Full Name" },
+        { "type": "text", "id": "placeholder", "label": "Placeholder" },
+        { "type": "checkbox", "id": "required", "label": "Required field", "default": true },
+        { "type": "checkbox", "id": "half_width", "label": "Half Width", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Contact" }]
+}
+{% endschema %}

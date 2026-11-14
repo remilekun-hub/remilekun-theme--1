@@ -1,0 +1,309 @@
+{% comment %} <section> {% endcomment %}
+
+<div
+  class="full-width promo"
+  style="--p-pad-top: {{ section.settings.padding_top }}px; --p-pad-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  <div>
+    <div class="promo__container" style="--gap: {{ section.settings.gap }}px">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          case block.settings.vertical_align
+            when 'top'
+              assign v_align = 'flex-start'
+            when 'bottom'
+              assign v_align = 'flex-end'
+            else
+              assign v_align = 'center'
+          endcase
+          case block.settings.horizontal_align
+            when 'left'
+              assign h_align = 'flex-start'
+            when 'right'
+              assign h_align = 'flex-end'
+            else
+              assign h_align = 'center'
+          endcase
+        -%}
+        <div
+          class="promo-card"
+          {{ block.shopify_attributes }}
+          style="
+            --text-align: {{ block.settings.text_align }};
+            --v-align: {{ v_align }};
+            --h-align: {{ h_align }};
+            --text-color: {{ block.settings.text_color }};
+            --eyebrow-color: {{ block.settings.eyebrow_color }};
+            --radius: {{ section.settings.radius }}px;
+          "
+        >
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'eager', class: 'promo-card__img' }}
+          {%- endif -%}
+
+          <div class="promo-card__content">
+            {%- if block.settings.eyebrow != blank -%}
+              <p class="promo-card__eyebrow">{{ block.settings.eyebrow }}</p>
+            {%- endif -%}
+            {%- if block.settings.heading != blank -%}
+              <h2 class="promo-card__heading">
+                {{ block.settings.heading | escape | newline_to_br }}
+              </h2>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p class="promo-card__text ">{{ block.settings.text | escape | newline_to_br }}</p>
+            {%- endif -%}
+            {%- if block.settings.link_url != blank -%}
+              <a href="{{ block.settings.link_url }}" class="promo-card__link">{{ block.settings.link_label }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% comment %} </section> {% endcomment %}
+{% schema %}
+{
+  "name": "Promos",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between cards",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+
+  "max_blocks": 4,
+
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "header", "content": "Image" },
+        { "type": "image_picker", "id": "image", "label": "Background image" },
+
+        { "type": "header", "content": "Content" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Exclusive deals await" },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Unlock your beauty\npotential",
+          "info": "Press Enter to create a line break."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Elevate your routine with our curated beauty essentials. Limited-time offers on radiant skincare."
+        },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "View products" },
+        { "type": "url", "id": "link_url", "label": "Link" },
+
+        { "type": "header", "content": "Layout" },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "vertical_align",
+          "label": "Vertical position",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "middle", "label": "Middle" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "middle"
+        },
+        {
+          "type": "select",
+          "id": "horizontal_align",
+          "label": "Horizontal position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Middle" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#2a1d14" },
+        { "type": "color", "id": "eyebrow_color", "label": "Eyebrow", "default": "#c8323a" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo",
+      "category": "Demo"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+  .promo__container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    padding-top: var(--p-pad-top);
+    padding-bottom: var(--p-pad-bottom);
+  }
+  .promo-card {
+    position: relative;
+    display: flex;
+    align-items: var(--v-align);
+    justify-content: var(--h-align);
+    min-height: 320px;
+    overflow: hidden;
+    color: var(--text-color);
+    text-align: var(--text-align);
+    gap: 16px;
+    border-radius: var(--radius);
+    isolation: isolate;
+    cursor: pointer;
+  }
+  .promo-card__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    will-change: transform;
+  }
+  @media (hover: hover) {
+    .promo-card:hover .promo-card__img {
+      transform: scale(1.1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .promo-card .promo-card__img {
+      transition: none;
+    }
+  }
+
+  .promo-card__content {
+    position: relative;
+    z-index: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .promo-card__eyebrow {
+    margin: 0;
+    color: var(--eyebrow-color);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 26px;
+    letter-spacing: 4.8px;
+    text-transform: uppercase;
+  }
+
+  .promo-card__heading {
+    margin: 0;
+    /* font-size: clamp(2.2rem, 2.4vw, 3rem); */
+    font-size: 36px;
+    line-height: 1.25;
+    color: inherit;
+    font-weight: 600;
+    font-family: var(--font-secondary--family) !important;
+    line-height: 50px;
+    text-transform: uppercase;
+    white-space: normal;
+  }
+
+  .promo-card__text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 24px;
+    color: inherit;
+    white-space: normal;
+  }
+
+  .promo-card__link {
+    color: #000;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+    text-decoration-thickness: 1px;
+    transition: all 0.3s ease-in-out;
+    font-weight: 600;
+    line-height: 18px;
+  }
+  .promo-card__link:hover {
+    color: var(--color-indianred-100);
+  }
+
+  .promo-card__link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+  @media screen and (max-width: 1024px) {
+    .promo__container {
+      grid-template-columns: 1fr !important;
+    }
+    .promo-card {
+      height: 375px;
+    }
+  }
+  @media screen and (min-width: 1024px) {
+    .promo {
+      padding-inline: 1.5rem;
+    }
+  }
+{% endstylesheet %}

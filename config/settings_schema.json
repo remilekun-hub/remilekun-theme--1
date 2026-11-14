@@ -1,0 +1,238 @@
+[
+	{
+		"name": "theme_info",
+		"theme_name": "Skeleton",
+		"theme_version": "0.1.0",
+		"theme_author": "Shopify",
+		"theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+		"theme_support_url": "https://support.shopify.com/"
+	},
+	{
+		"name": "t:general.typography",
+		"settings": [
+			{
+				"type": "header",
+				"content": "t:general.fonts"
+			},
+			{
+				"type": "font_picker",
+				"id": "type_primary_font",
+				"default": "montserrat_n4",
+				"label": "t:general.primary"
+			},
+			{
+				"type": "font_picker",
+				"id": "type_secondary_font",
+			  "default": "cormorant_n4",
+				"label": "t:general.secondary"
+			}
+		]
+	},
+	{
+		"name": "t:general.layout",
+		"settings": [
+			{
+				"type": "select",
+				"id": "max_page_width",
+				"label": "t:labels.page_width",
+				"options": [
+					{
+						"value": "90rem",
+						"label": "t:options.page_width.narrow"
+					},
+					{
+						"value": "110rem",
+						"label": "t:options.page_width.wide"
+					},
+					{
+						"value": "100%",
+						"label": "Full width"
+					}
+				],
+				"default": "90rem"
+			},
+			{
+				"type": "range",
+				"id": "min_page_margin",
+				"min": 10,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "t:labels.page_margin",
+				"default": 20
+			}
+		]
+	},
+	{
+		"name": "t:general.colors",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Base Colors"
+			},
+			{
+				"type": "color",
+				"id": "darkslategray_100",
+				"default": "#414141",
+				"label": "Dark Slate Gray 100"
+			},
+			{
+				"type": "color",
+				"id": "darkslategray_200",
+				"default": "#2F3336",
+				"label": "Dark Slate Gray 200"
+			},
+			{
+				"type": "color",
+				"id": "whitesmoke_100",
+				"default": "#FAF5F2",
+				"label": "Whitesmoke 100"
+			},
+			{
+				"type": "color",
+				"id": "peachpuff_100",
+				"default": "#EFD6C9",
+				"label": "Peachpuff 100"
+			},
+			{
+				"type": "color",
+				"id": "black_100",
+				"default": "#222222",
+				"label": "Black 100"
+			},
+			{
+				"type": "color",
+				"id": "black_200",
+				"default": "#000000",
+				"label": "Black 200"
+			},
+			{
+				"type": "color",
+				"id": "white_100",
+				"default": "#FFFFFF",
+				"label": "White 100"
+			},
+			{
+				"type": "color",
+				"id": "gray_100",
+				"default": "#7A7A7A",
+				"label": "Gray 100"
+			},
+			{
+				"type": "header",
+				"content": "Status and Utility Colors"
+			},
+			{
+				"type": "color",
+				"id": "indianred_100",
+				"default": "#E35353",
+				"label": "Indian Red 100"
+			},
+			{
+				"type": "color",
+				"id": "papayawhip_100",
+				"default": "#FFF3CD",
+				"label": "Papaya Whip 100"
+			},
+			{
+				"type": "color",
+				"id": "lavender_100",
+				"default": "#E9E9E9",
+				"label": "Lavender 100"
+			},
+			{
+				"type": "color",
+				"id": "olive_100",
+				"default": "#856404",
+				"label": "Olive 100"
+			},
+			{
+				"type": "color",
+				"id": "moccasin_100",
+				"default": "#FFEEBA",
+				"label": "Moccasin 100"
+			},
+			{
+				"type": "color",
+				"id": "mediumaquamarine_100",
+				"default": "#84C8BB",
+				"label": "Medium Aquamarine 100"
+			},
+			{
+				"type": "color",
+				"id": "limegreen_100",
+				"default": "#34BF49",
+				"label": "Lime Green 100"
+			},
+			{
+				"type": "color",
+				"id": "darkorange_100",
+				"default": "#F48120",
+				"label": "Dark Orange 100"
+			},
+			{
+				"type": "color",
+				"id": "steelblue_100",
+				"default": "#3086C8",
+				"label": "Steel Blue 100"
+			},
+			{
+				"type": "color",
+				"id": "chocolate_100",
+				"default": "#D1512D",
+				"label": "Chocolate 100"
+			},
+			{
+				"type": "header",
+				"content": "Homepage Colors"
+			},
+			{
+				"type": "color",
+				"id": "rosybrown",
+				"default": "#A69284",
+				"label": "Rosy Brown"
+			},
+			{
+				"type": "color",
+				"id": "black_2",
+				"default": "#111110",
+				"label": "Black 2"
+			},
+			{
+				"type": "color",
+				"id": "linen",
+				"default": "#F7EAE6",
+				"label": "Linen"
+			},
+			{
+				"type": "color",
+				"id": "saddlebrown",
+				"default": "#6E3727",
+				"label": "Saddle Brown"
+			},
+			{
+				"type": "color",
+				"id": "sienna",
+				"default": "#895A37",
+				"label": "Sienna"
+			},
+			{
+				"type": "color",
+				"id": "lightgray",
+				"default": "#DFCCB6",
+				"label": "Light Gray"
+			},
+
+			{
+				"type": "range",
+				"id": "input_corner_radius",
+				"min": 0,
+				"max": 10,
+				"step": 1,
+				"unit": "px",
+				"label": "t:labels.input_corner_radius",
+				"default": 4
+			}
+		]
+	}
+]
