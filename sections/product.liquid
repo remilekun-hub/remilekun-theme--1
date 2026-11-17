@@ -5,43 +5,291 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+{% comment %}
+  Main product section.
+  Product gallery, information and purchase form.
+{% endcomment %}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-  
-</div>
+{% assign current_variant = product.selected_or_first_available_variant %}
+{{ 'product.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product.js' | asset_url }}" defer></script>
 
+<section
+  class="main-product"
+  data-product-section
+  data-section-id="{{ section.id }}"
+>
+  <div class="main-product__container">
+    <!-- PRODUCT GALLERY -->
+    <div class="product-gallery" data-product-gallery>
+      <div class="product-gallery__main">
+        {% if product.images.size > 0 %}
+          {% for image in product.images %}
+            <div
+              class="product-gallery__slide{% if forloop.first %} is-active{% endif %}"
+              data-gallery-slide
+              data-index="{{ forloop.index0 }}"
+              data-image-id="{{ image.id }}"
+            >
+              {{
+                image
+                | image_url: width: 1400
+                | image_tag: class: 'product-gallery__image', loading: 'eager', alt: image.alt
+              }}
+            </div>
+          {% endfor %}
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+          <button
+            type="button"
+            class="product-gallery__arrow product-gallery__arrow--prev"
+            data-gallery-prev
+            aria-label="Previous image"
+          >
+            &larr;
+          </button>
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
+          <button
+            type="button"
+            class="product-gallery__arrow product-gallery__arrow--next"
+            data-gallery-next
+            aria-label="Next image"
+          >
+            &rarr;
+          </button>
+        {% endif %}
+      </div>
+
+      <!-- THUMBNAILS -->
+      <div class="product-gallery__thumbnails">
+        {% for image in product.images %}
+          <button
+            type="button"
+            class="product-gallery__thumbnail{% if forloop.first %} is-active{% endif %}"
+            data-gallery-thumbnail
+            data-index="{{ forloop.index0 }}"
+            aria-label="View image {{ forloop.index }}"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            {{ image | image_url: width: 200 | image_tag: loading: 'lazy', alt: image.alt }}
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- PRODUCT INFORMATION -->
+    <div class="product-info">
+      <h1 class="product-info__title">
+        {{ product.title }}
+      </h1>
+
+      <div class="product-info__rating">
+        <!-- Rating integration will go here -->
+      </div>
+
+      <div class="product-info__price">
+        <span data-product-price>
+          {{ current_variant.price | money }}
+        </span>
+
+        <s
+          data-compare-price
+          {% unless current_variant.compare_at_price > current_variant.price %}
+            hidden
+          {% endunless %}
         >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+          {{ current_variant.compare_at_price | money }}
+        </s>
+        {% if current_variant.inventory_management == 'shopify' %}
+          <p class="product-info__stock" data-product-stock>{{ current_variant.inventory_quantity }} available</p>
+        {% endif %}
+      </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+      <!-- PRODUCT FORM -->
+      {% form 'product', product, id: 'MainProductForm' %}
+        <div class="product-purchase">
+          <!-- VARIANTS -->
+          {% if product.variants.size > 1 %}
+            <div class="product-variants">
+              <label for="ProductVariant"> Options </label>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+              <select
+                name="id"
+                id="ProductVariant"
+                data-variant-select
+              >
+                {% for variant in product.variants %}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant.id == current_variant.id %}
+                      selected
+                    {% endif %}
+                    data-price="{{ variant.price | money | escape }}"
+                    data-compare-price="{{ variant.compare_at_price | money | escape }}"
+                    data-compare-price-raw="{{ variant.compare_at_price | default: 0 }}"
+                    data-sku="{{ variant.sku | escape }}"
+                    data-available="{{ variant.available }}"
+                    data-image-id="{{ variant.featured_image.id }}"
+                    data-price-raw="{{ variant.price }}"
+                  >
+                    {{ variant.title }}
+                    {% unless variant.available %}
+                      - Sold out
+                    {% endunless %}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% else %}
+            <input
+              type="hidden"
+              name="id"
+              value="{{ current_variant.id }}"
+            >
+          {% endif %}
+
+          <!-- QUANTITY -->
+          <div class="product-quantity">
+            <button
+              type="button"
+              data-quantity-minus
+              aria-label="Decrease quantity"
+            >
+              &minus;
+            </button>
+
+            <input
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              step="1"
+              data-product-quantity
+              aria-label="Quantity"
+            >
+
+            <button
+              type="button"
+              data-quantity-plus
+              aria-label="Increase quantity"
+            >
+              &plus;
+            </button>
+          </div>
+
+          <!-- PURCHASE BUTTONS -->
+          <div class="product-purchase__buttons">
+            <button
+              type="submit"
+              name="add"
+              class="product-add-to-cart"
+              {% unless current_variant.available %}
+                disabled
+              {% endunless %}
+              data-add-to-cart
+            >
+              {% if current_variant.available %}
+                Add to cart
+              {% else %}
+                Sold out
+              {% endif %}
+            </button>
+
+            <div class="product-buy-now">
+              {{ form | payment_button }}
+            </div>
+          </div>
+        </div>
+      {% endform %}
+
+      <!-- WISHLIST AND COMPARE -->
+      <div class="product-actions">
+        <button type="button" data-wishlist>♥ Go To Wishlist</button>
+
+        <button
+          type="button"
+          data-compare
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title | escape }}"
+          data-product-url="{{ product.url }}"
+          data-product-image="{{ product.featured_image | image_url: width: 400 }}"
+          aria-pressed="false"
+        >
+          ⇄ Compare
+        </button>
+      </div>
+
+      <!-- PRODUCT METADATA -->
+      <div class="product-meta">
+        <div>
+          <span>Vendor:</span>
+          <span>{{ product.vendor }}</span>
+        </div>
+
+        <div>
+          <span>Type:</span>
+          <span>{{ product.type | default: 'N/A' }}</span>
+        </div>
+
+        <div>
+          <span>SKU:</span>
+          <span data-product-sku>
+            {{ current_variant.sku | default: 'N/A' }}
+          </span>
+        </div>
+
+        <div>
+          <span>Available:</span>
+          <span data-product-availability>
+            {% if current_variant.available %}
+              Available
+            {% else %}
+              Sold out
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- ACCORDIONS -->
+      <div class="product-accordions">
+        <details class="product-accordion">
+          <summary>
+            <span>Shipping information</span>
+            <span>+</span>
+          </summary>
+
+          <div class="product-accordion__content">
+            {{ product.metafields.custom.shipping_information.value }}
+          </div>
+        </details>
+
+        <details class="product-accordion">
+          <summary>
+            <span>Care Guide</span>
+            <span>+</span>
+          </summary>
+
+          <div class="product-accordion__content">
+            {{ product.metafields.custom.care_guide.value }}
+          </div>
+        </details>
+      </div>
+
+      <!-- PRODUCT DESCRIPTION -->
+      <div class="product-description">
+        {{ product.description }}
+      </div>
+
+      <!-- SOCIAL SHARING -->
+      <div class="product-sharing">
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url | url_encode }}"> Share </a>
+
+        <a href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ product.url | url_encode }}"> Tweet </a>
+
+        <a href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url | url_encode }}"> Pin it </a>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% schema %}
 {
