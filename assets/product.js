@@ -113,16 +113,14 @@ class ProductQuantity {
 class ProductVariants {
   constructor(element) {
     this.element = element;
-
     this.select = element.querySelector("[data-variant-select]");
     this.price = element.querySelector("[data-product-price]");
     this.comparePrice = element.querySelector("[data-compare-price]");
     this.sku = element.querySelector("[data-product-sku]");
+    this.stock = element.querySelector("[data-product-stock]");
     this.availability = element.querySelector("[data-product-availability]");
     this.addButton = element.querySelector("[data-add-to-cart]");
-
     this.gallery = element.querySelector("[data-product-gallery]");
-
     this.init();
   }
 
@@ -137,12 +135,13 @@ class ProductVariants {
 
     if (!selectedOption) return;
 
-    const { price, comparePrice, comparePriceRaw, sku, available, imageId } = selectedOption.dataset;
+    const { price, comparePrice, comparePriceRaw, sku, available, imageId, inventory } = selectedOption.dataset;
 
     this.updatePrice(price, comparePrice, comparePriceRaw);
     this.updateSku(sku);
     this.updateAvailability(available);
     this.updateButton(available);
+    this.updateStock(inventory, available);
 
     if (imageId) {
       this.updateImage(imageId);
@@ -172,6 +171,16 @@ class ProductVariants {
   updateSku(sku) {
     this.sku.textContent = sku || "N/A";
   }
+  updateStock(inventory, available) {
+    if (!this.stock) return;
+
+    if (available !== "true") {
+      this.stock.textContent = "Sold out";
+      return;
+    }
+
+    this.stock.textContent = `${inventory} available`;
+  }
 
   updateAvailability(available) {
     const isAvailable = available === "true";
@@ -196,6 +205,87 @@ class ProductVariants {
 
     if (imageIndex !== -1) {
       this.gallery.productGalleryInstance?.showImage(imageIndex);
+    }
+  }
+}
+
+class ProductCart {
+  constructor(element) {
+    this.element = element;
+    this.form = element.querySelector('form[action*="/cart/add"]');
+    this.button = element.querySelector("[data-add-to-cart]");
+    this.quantity = element.querySelector("[data-product-quantity]");
+
+    this.init();
+  }
+
+  init() {
+    if (!this.form) return;
+
+    this.form.addEventListener("submit", this.handleSubmit.bind(this));
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+
+    if (!this.form.checkValidity()) {
+      this.form.reportValidity();
+      return;
+    }
+
+    const originalText = this.button.textContent;
+
+    this.button.disabled = true;
+    this.button.textContent = "Adding...";
+
+    try {
+      const formData = new FormData(this.form);
+
+      const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.description || "Unable to add product.");
+      }
+
+      this.button.textContent = "Added to cart";
+
+      await this.updateCartCount();
+
+      console.log("Product added:", result);
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      this.button.textContent = "Unable to add";
+    } finally {
+      setTimeout(() => {
+        this.button.disabled = false;
+        this.button.textContent = originalText;
+      }, 1500);
+    }
+  }
+
+  async updateCartCount() {
+    try {
+      const response = await fetch(`${window.Shopify.routes.root}cart.js`);
+
+      if (!response.ok) {
+        throw new Error("Unable to retrieve cart.");
+      }
+
+      const cart = await response.json();
+
+      document.querySelectorAll("[data-cart-count]").forEach((element) => {
+        element.textContent = cart.item_count;
+      });
+    } catch (error) {
+      console.error("Cart count update failed:", error);
     }
   }
 }
@@ -291,6 +381,9 @@ function initializeProductSection(section) {
   }
   if (!section.productCompareInstance) {
     section.productCompareInstance = new ProductCompare(section);
+  }
+  if (!section.productCartInstance) {
+    section.productCartInstance = new ProductCart(section);
   }
 }
 function initializeProducts() {

@@ -22,7 +22,6 @@
   <header class="cart-page__header">
     <h1 class="cart-page__title">
       {{ 'cart.title' | t }}
-      <span class="cart-page__count">({{ cart_count }})</span>
     </h1>
   </header>
 
@@ -49,11 +48,6 @@
       <div class="cart-page__layout">
         <!-- Cart items -->
         <div class="cart-page__items">
-          <div class="cart-page__items-header">
-            <h2>Shopping bag</h2>
-            <span>{{ cart_count }} items</span>
-          </div>
-
           {% for item in cart.items %}
             <article
               class="cart-item"

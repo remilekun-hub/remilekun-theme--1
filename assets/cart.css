@@ -9,15 +9,9 @@
 
 .cart-page__title {
   margin: 0;
-  font-family: var(--font-primary--family);
-  font-size: clamp(28px, 4vw, 42px);
+  font-family: var(--font-secondary--family);
+  font-size: clamp(28px, 4vw, 32px);
   font-weight: 600;
-}
-
-.cart-page__count {
-  color: var(--color-gray-100, #7a7a7a);
-  font-size: 0.65em;
-  font-weight: 400;
 }
 
 /* =========================================
@@ -33,17 +27,9 @@
 
 .cart-page__items {
   min-width: 0;
+  background: #fff;
 }
 
-.cart-page__items-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--color-border, #e5e0dc);
-}
-
-.cart-page__items-header h2,
 .cart-summary__title {
   margin: 0;
   font-size: 18px;
@@ -220,7 +206,8 @@
 
 .cart-item__final-price {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 400;
+  
 }
 
 .cart-item__volume-pricing {

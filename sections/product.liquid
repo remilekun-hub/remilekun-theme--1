@@ -100,7 +100,15 @@
           {{ current_variant.compare_at_price | money }}
         </s>
         {% if current_variant.inventory_management == 'shopify' %}
-          <p class="product-info__stock" data-product-stock>{{ current_variant.inventory_quantity }} available</p>
+          {% comment %} <p class="product-info__stock" data-product-stock>{{ current_variant.inventory_quantity }} available</p> {% endcomment %}
+
+          <p class="product-info__stock" data-product-stock>
+            {% if current_variant.available %}
+              {{ current_variant.inventory_quantity }} available
+            {% else %}
+              Sold out
+            {% endif %}
+          </p>
         {% endif %}
       </div>
 
@@ -130,6 +138,7 @@
                     data-available="{{ variant.available }}"
                     data-image-id="{{ variant.featured_image.id }}"
                     data-price-raw="{{ variant.price }}"
+                    data-inventory="{{ variant.inventory_quantity }}"
                   >
                     {{ variant.title }}
                     {% unless variant.available %}
