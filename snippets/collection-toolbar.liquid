@@ -1,0 +1,54 @@
+{% comment %}
+  Collection Toolbar
+
+  Renders the toolbar above the collection product grid.
+
+  Responsibilities:
+  - Display the current product count.
+  - Provide Shopify's native sorting options.
+  - Preserve the selected sorting option.
+  - Submit the selected sorting option to Shopify.
+
+  Required context:
+  - collection: Shopify collection object.
+  - paginate: Shopify pagination object.
+
+  Usage:
+  {% render 'collection-toolbar',
+    collection: collection,
+    paginate: paginate
+  %}
+
+  Notes:
+  - Sorting is handled by Shopify through the sort_by URL parameter.
+  - Product filtering is handled separately by collection-filters.liquid.
+{% endcomment %}
+
+<div class="collection-toolbar">
+  <div class="collection-toolbar__sort">
+    <label for="CollectionSort"> Sort by: </label>
+
+    <select
+      id="CollectionSort"
+      name="sort_by"
+      data-collection-sort
+    >
+      {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+
+      {% for option in collection.sort_options %}
+        <option
+          value="{{ option.value }}"
+          {% if option.value == sort_by %}
+            selected
+          {% endif %}
+        >
+          {{ option.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="collection-toolbar__count">
+    <p>{{ paginate.items }} products</p>
+  </div>
+</div>

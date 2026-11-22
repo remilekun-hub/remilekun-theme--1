@@ -1,0 +1,85 @@
+{% comment %}
+  Collection Product Card
+
+  Renders an individual product card for collection product grids.
+
+  Responsibilities:
+  - Display the product's featured image.
+  - Display a product badge (Sold out or Sale).
+  - Display the product vendor.
+  - Display the product title.
+  - Display the selected variant's price.
+  - Display the compare-at price when the product is discounted.
+  - Link the card to the product details page.
+
+  Required context:
+  - product: Shopify product object.
+
+  Variant handling:
+  - Uses product.selected_or_first_available_variant
+    to determine the variant used for displaying prices.
+
+  Usage:
+  {% render 'collection-product-card', product: product %}
+
+  Notes:
+  - This snippet only handles product card markup.
+  - Styling is managed separately in collection.css.
+  - Wishlist functionality is not currently implemented.
+{% endcomment %}
+
+{% assign card_variant = product.selected_or_first_available_variant %}
+
+<article class="product-card">
+  <a href="{{ product.url }}" class="product-card__link">
+    <div class="product-card__media">
+      {% if product.featured_image %}
+        {{
+          product.featured_image
+          | image_url: width: 600
+          | image_tag:
+            class: 'product-card__image product-card__image--primary',
+            loading: 'lazy',
+            alt: product.featured_image.alt
+        }}
+      {% endif %}
+
+      {% if product.images.size > 1 %}
+        {{
+          product.images[1]
+          | image_url: width: 600
+          | image_tag:
+            class: 'product-card__image product-card__image--secondary',
+            loading: 'lazy',
+            alt: product.images[1].alt
+        }}
+      {% endif %}
+
+      {% if product.available == false %}
+        <span class="product-card__badge"> Sold Out </span>
+      {% elsif card_variant.compare_at_price > card_variant.price %}
+        <span class="product-card__badge product-card__badge--sale"> Sale </span>
+      {% endif %}
+    </div>
+
+    <div class="product-card__content">
+      {% if product.vendor != blank %}
+        <p class="product-card__vendor">
+          {{ product.vendor }}
+        </p>
+      {% endif %}
+
+      <h3 class="product-card__title">
+        {{ product.title | escape }}
+      </h3>
+
+      <div class="product-card__price">
+        <span>{{ card_variant.price | money }}</span>
+
+        {% if card_variant.compare_at_price > card_variant.price %}
+          <s>{{ card_variant.compare_at_price | money }}</s>
+        {% endif %}
+      </div>
+    </div>
+  </a>
+</article>

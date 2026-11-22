@@ -12,9 +12,11 @@
     "main": {
       "type": "collections",
       "settings": {}
+    },
+    "breadcrumb": {
+      "type": "breadcrumb",
+      "settings": {}
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["breadcrumb", "main"]
 }

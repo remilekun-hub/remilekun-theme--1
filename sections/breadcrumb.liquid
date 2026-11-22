@@ -1,0 +1,48 @@
+<nav class="breadcrumb">
+  <div class="shopify-section">
+    <div class="breadcrumb__content">
+      <a class="breadcrumb__link" href="{{ routes.root_url }}"> Home </a>
+
+      <span class="breadcrumb__separator">/</span>
+
+      <span class="breadcrumb__current">
+        {{ page_title }}
+      </span>
+    </div>
+  </div>
+</nav>
+
+{% stylesheet %}
+  .breadcrumb {
+    padding: 16px 0;
+    background-color: #fff;
+    grid-column: 1 / -1;
+  }
+
+  .breadcrumb__content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .breadcrumb__link,
+  .breadcrumb__separator,
+  .breadcrumb__current {
+    color: #000;
+    font-size: 14px;
+    line-height: 20px;
+    text-decoration: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Breadcrumb",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Breadcrumb"
+    }
+  ]
+}
+{% endschema %}

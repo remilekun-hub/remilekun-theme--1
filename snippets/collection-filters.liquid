@@ -1,0 +1,129 @@
+
+{% comment %}
+  Collection Filters
+
+  Renders Shopify's native collection filters.
+
+  Responsibilities:
+  - Display available filters for the current collection.
+  - Support checkbox filters.
+  - Support minimum and maximum price filters.
+  - Show the number of matching products for each filter value.
+  - Preserve the current sorting selection.
+  - Allow customers to apply and clear filters.
+
+  Required context:
+  - collection: Shopify collection object.
+
+  Dependencies:
+  - Filters must be configured in Shopify Search & Discovery.
+
+  Usage:
+  {% render 'collection-filters', collection: collection %}
+{% endcomment %}
+
+{% if collection.filters.size > 0 %}
+  <form
+    action="{{ collection.url }}"
+    method="get"
+    class="collection-filters"
+    data-collection-filters
+  >
+    {% if collection.sort_by != blank %}
+      <input
+        type="hidden"
+        name="sort_by"
+        value="{{ collection.sort_by }}"
+      >
+    {% endif %}
+
+    {% for filter in collection.filters %}
+      <details class="collection-filter">
+        <summary class="collection-filter__heading">
+          <span>{{ filter.label }}</span>
+          <span aria-hidden="true">+</span>
+        </summary>
+
+        <div class="collection-filter__content">
+
+          {% case filter.type %}
+
+            {% when 'list' %}
+              {% for value in filter.values %}
+                <label class="collection-filter__option">
+                  <input
+                    type="checkbox"
+                    name="{{ value.param_name }}"
+                    value="{{ value.value }}"
+                    {% if value.active %}checked{% endif %}
+                    {% if value.count == 0 and value.active == false %}
+                      disabled
+                    {% endif %}
+                  >
+
+                  <span>{{ value.label }}</span>
+                  <span>({{ value.count }})</span>
+                </label>
+              {% endfor %}
+
+            {% when 'boolean' %}
+              {% for value in filter.values %}
+                <label class="collection-filter__option">
+                  <input
+                    type="checkbox"
+                    name="{{ value.param_name }}"
+                    value="{{ value.value }}"
+                    {% if value.active %}checked{% endif %}
+                  >
+
+                  <span>{{ value.label }}</span>
+                </label>
+              {% endfor %}
+
+            {% when 'price_range' %}
+              <div class="collection-filter__price">
+                <label>
+                  <span>From</span>
+                  <input
+                    type="number"
+                    name="{{ filter.min_value.param_name }}"
+                    value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                    min="0"
+                    placeholder="0"
+                  >
+                </label>
+
+                <label>
+                  <span>To</span>
+                  <input
+                    type="number"
+                    name="{{ filter.max_value.param_name }}"
+                    value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                    min="0"
+                    placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  >
+                </label>
+
+                <p>
+                  The highest price is
+                  {{ filter.range_max | money }}
+                </p>
+              </div>
+
+          {% endcase %}
+
+        </div>
+      </details>
+    {% endfor %}
+
+    <div class="collection-filters__actions">
+      <button type="submit">
+        Apply filters
+      </button>
+
+      <a href="{{ collection.url }}">
+        Clear all
+      </a>
+    </div>
+  </form>
+{% endif %}

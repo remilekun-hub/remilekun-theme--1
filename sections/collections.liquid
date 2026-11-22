@@ -5,11 +5,13 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
-
 <div
   class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
+  style="
+    --grid-gap: {{ section.settings.grid_gap }}px;
+    --padding-top: {{ section.settings.padding_top }}px;
+    --padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
 >
   {% for collection in collections %}
     <a class="collection-card" href="{{ collection.url }}">
@@ -24,10 +26,13 @@
       {% endif %}
 
       <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+        <p class="collection_card__title">{{ collection.title }}</p>
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
+        {% if collection.products_count > 0 %}
+          <p class="collection_card__desc">
+            {{ collection.products_count }}
+            {% if collection.products_count == 1 %}product{% else %}products{% endif %}
+          </p>
         {% endif %}
       </div>
     </a>
@@ -39,17 +44,50 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
     gap: var(--grid-gap);
+    padding-top: var(--padding-top);
+    padding-bottom: var(--padding-bottom);
   }
+
   .collections--compact {
     --collection-card-size: 160px;
   }
   .collections--full {
-    --collection-card-size: 280px;
+    --collection-card-size: 350px;
   }
   .collection-card {
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .collection-card__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+    align-items: center;
+  }
+  .collection_card__title {
+    font-size: 24px;
+    color: #222;
+    font-weight: 600;
+    line-height: 39px;
+    font-family: var(--font-secondary--family);
+  }
+
+  .collection_card__desc {
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #41414199;
+  }
+  @media screen and (max-width: 749px) {
+    .collections {
+      padding-top: calc(var(--padding-top) * 0.6);
+      padding-bottom: calc(var(--padding-bottom) * 0.6);
+    }
   }
 {% endstylesheet %}
 
@@ -57,6 +95,26 @@
 {
   "name": "t:general.collections_grid",
   "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
     {
       "type": "select",
       "id": "grid_item_width",
