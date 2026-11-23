@@ -1,0 +1,30 @@
+{% comment %} {{ 'wishlist.css' | asset_url | stylesheet_tag }} {% endcomment %}
+{% comment %} <script src="{{ 'wishlist-page.js' | asset_url }}" defer></script> {% endcomment %}
+
+<section class="wishlist-page" data-wishlist-page>
+  <header class="wishlist-page__header">
+    <h1>My Wishlist</h1>
+    <p data-wishlist-count>0 items</p>
+  </header>
+
+  <div class="wishlist-page__content">
+    <div
+      class="wishlist-grid"
+      data-wishlist-grid
+    ></div>
+
+    <div
+      class="wishlist-empty"
+      data-wishlist-empty
+      hidden
+    >
+      <h2>Your wishlist is empty</h2>
+      <p>Save your favourite products and find them here later.</p>
+      <a href="{{ routes.all_products_collection_url }}"> Continue shopping </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "wishlist", "settings": [] }
+{% endschema %}

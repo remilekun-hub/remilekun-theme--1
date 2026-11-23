@@ -5,20 +5,43 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/404
 {% endcomment %}
 
-<h1>{{ '404.title' | t }}</h1>
+{% assign button_text = '404.back_to_shopping' | t %}
 
-<p>
-  {{ '404.not_found' | t }} 
-</p>
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
+<div class="page__container">
+  <div class="page__content">
+    <p class="page__title">
+      {{ '404.not_found' | t }}
+    </p>
+
+    {% render 'button', class: 'button button--primary', text: button_text, url: routes.all_products_collection_url %}
+  </div>
+</div>
 
 {% schema %}
 {
   "name": "t:general.404",
-  "settings": [
-  
-  ]
+  "settings": []
 }
 {% endschema %}
+
+{% stylesheet %}
+  .page__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 5rem);
+  }
+  .page__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  .page__title {
+    font-size: 1.8rem;
+    line-height: 50px;
+    font-weight: 600;
+    text-align: center;
+    font-family: var(--font-secondary--family);
+  }
+{% endstylesheet %}
