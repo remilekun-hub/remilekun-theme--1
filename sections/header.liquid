@@ -13,7 +13,7 @@
 
       <div class="header__icons">
         {% if shop.customer_accounts_enabled %}
-          <shopify-account menu="{{ section.settings.customer_account_menu }} class=" header__account-menu>
+          <shopify-account menu="{{ section.settings.customer_account_menu }}" class="header__account-menu">
             {{ 'icon-account.svg' | inline_asset_content }}
           </shopify-account>
         {% endif %}
@@ -91,11 +91,18 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    display: none;
   }
 
   .header__account-menu svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 20px !important;
+    height: 22px !important;
+    color: var(--color-darkslategray-200);
+    transition: 0.3s color;
+    stroke-width: 1;
+  }
+  .header__account-menu svg:hover {
+    color: var(--color-indianred-100);
   }
 {% endstylesheet %}
 
